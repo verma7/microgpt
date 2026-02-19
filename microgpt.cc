@@ -17,6 +17,8 @@ using namespace std;
 // Let there be Autograd to recursively apply the chain rule through a computation graph
 class Value : public std::enable_shared_from_this<Value> {
   public:
+	float data;
+	float grad;
 	using Ptr = std::shared_ptr<Value>;
 
 	// Factory method for elegance: Value::make(0.5)
@@ -25,41 +27,34 @@ class Value : public std::enable_shared_from_this<Value> {
     	}
 
 	Value(float data, const vector<Ptr>& children = {}, const vector<float>& local_grads = {}):
-		data_(data),
-		grad_(0),
+		data(data),
+		grad(0),
 		children_(children.begin(), children.end()),
 		local_grads_(local_grads.begin(), local_grads.end()) {}
 
 	friend Ptr operator+(const Ptr& lhs, const Ptr& rhs) {
-        	return make(lhs->data_ + rhs->data_, {lhs, rhs}, {1.0f, 1.0f});
+		return make(lhs->data + rhs->data, {lhs, rhs}, {1.0f, 1.0f});
     	}
-
 	friend Ptr operator-(const Ptr& lhs, const Ptr& rhs) {
-        	return make(lhs->data_ - rhs->data_, {lhs, rhs}, {1.0f, -1.0f});
+		return make(lhs->data - rhs->data, {lhs, rhs}, {1.0f, -1.0f});
     	}
-
 	friend Ptr operator*(const Ptr& lhs, const Ptr& rhs) {
-        	return make(lhs->data_ * rhs->data_, {lhs, rhs}, {rhs->data_, lhs->data_});
+		return make(lhs->data * rhs->data, {lhs, rhs}, {rhs->data, lhs->data});
     	}
-	
 	static Ptr pow(const Ptr& lhs, float other) {
-		return make(std::pow(lhs->get_data(), other), {lhs}, {other * std::pow(lhs->get_data(), other - 1)});
+		return make(std::pow(lhs->data, other), {lhs}, {other * std::pow(lhs->data, other - 1)});
 	}
-
 	friend Ptr operator/(const Ptr& lhs, const Ptr& rhs) {
         	return lhs * pow(rhs, -1);
     	}
-
 	static Ptr log(const Ptr& p) {
-		return make(std::log(p->get_data()), {p}, {1.0f/p->get_data()});
+		return make(std::log(p->data), {p}, {1.0f/p->data});
 	}
-
 	static Ptr exp(const Ptr& p) {
-		return make(std::exp(p->get_data()), {p}, {std::exp(p->get_data())});
+		return make(std::exp(p->data), {p}, {std::exp(p->data)});
 	}
-
 	static Ptr relu(const Ptr& p) {
-		return make(std::max({p->get_data(), 0.0f}), {p}, {static_cast<float>(p->get_data() > 0)});
+		return make(std::max({p->data, 0.0f}), {p}, {static_cast<float>(p->data > 0)});
 	}
 
 	void backward() {
@@ -67,58 +62,33 @@ class Value : public std::enable_shared_from_this<Value> {
 		unordered_set<Ptr> visited;
 		build_topo(shared_from_this(), &topo, &visited);
 		reverse(topo.begin(), topo.end());
-		grad_ = 1;
-		for (auto& value : topo) {
-			for (int i = 0; i < value->children_.size(); i++) {
-				value->children_[i]->grad_ += value->local_grads_[i] * value->grad_;
-			}
-		}
+		grad = 1;
+		for (auto& value : topo) for (int i = 0; i < value->children_.size(); i++) value->children_[i]->grad += value->local_grads_[i] * value->grad;
 	}
 
-	float get_data() const {
-		return data_;
+	friend std::ostream& operator<<(std::ostream& os, const Ptr& p) {
+	    os << "[data = " << p->data << ", grad = " << p->grad << "]";
+	    return os;
 	}
-	void set_data(float new_data) {
-		data_ = new_data;
-	}
-	float get_grad() const {
-		return grad_;
-	}
-	void reset_grad() {
-		grad_ = 0;
-	}
-
-	friend std::ostream& operator<<(std::ostream& os, const Ptr& p);
 
   private:
-	float data_;
-	float grad_;
 	vector<Ptr> children_;
 	vector<float> local_grads_;
 
 	void build_topo(Ptr node, vector<Ptr>* topo, unordered_set<Ptr>* visited) {
 		if (visited->find(node) == visited->end()) {
 			visited->insert(node);
-			for (Ptr child : node->children_) {
-				build_topo(child, topo, visited);
-			}
+			for (Ptr child : node->children_) build_topo(child, topo, visited);
 			topo->push_back(node);
 		}
 	}
 };
 
-std::ostream& operator<<(std::ostream& os, const Value::Ptr& p) {
-    os << "[data_ = " << p->data_ << ", grad_ = " << p->grad_ << "]";
-    return os;
-}
-
 vector<vector<Value::Ptr>> matrix(int nout, int nin, normal_distribution<float>& d, mt19937& g) {
 	vector<vector<Value::Ptr>> output;
 	for (int i = 0; i < nout; i++) {
 		vector<Value::Ptr> row;
-		for (int j = 0; j < nin; j++) {
-			row.push_back(Value::make(d(g)));
-		}
+		for (int j = 0; j < nin; j++) row.push_back(Value::make(d(g)));
 		output.push_back(row);
 	}
 	return output;
@@ -131,9 +101,7 @@ vector<Value::Ptr> linear(vector<Value::Ptr>& x, vector<vector<Value::Ptr>>& w) 
 	vector<Value::Ptr> output;
 	for (int i = 0; i < w.size(); i++) {
 		Value::Ptr total = Value::make(0);
-		for (int j = 0; j < w[i].size(); j++) {
-			total = total + w[i][j] * x[j];
-		}
+		for (int j = 0; j < w[i].size(); j++) total = total + w[i][j] * x[j];
 		output.push_back(total);
 	}
 	return output;
@@ -141,9 +109,7 @@ vector<Value::Ptr> linear(vector<Value::Ptr>& x, vector<vector<Value::Ptr>>& w) 
 
 vector<Value::Ptr> softmax(vector<Value::Ptr>& logits) {
 	float max_val = numeric_limits<float>::min();
-	for (int i = 0; i < logits.size(); i++) {
-		max_val = max(max_val, logits[i]->get_data());
-	}
+	for (int i = 0; i < logits.size(); i++) max_val = max(max_val, logits[i]->data);
 	vector<Value::Ptr> exps;
 	Value::Ptr total = Value::make(0);	
 	Value::Ptr max_value = Value::make(max_val);
@@ -152,23 +118,17 @@ vector<Value::Ptr> softmax(vector<Value::Ptr>& logits) {
 		total = total + exps[i];
 	}
 	vector<Value::Ptr> outputs;
-	for (int i = 0; i < exps.size(); i++) {
-		outputs.push_back(exps[i] / total);
-	}
+	for (int i = 0; i < exps.size(); i++) outputs.push_back(exps[i] / total);
 	return outputs;
 }
 
 vector<Value::Ptr> rmsnorm(vector<Value::Ptr>& x) {
 	Value::Ptr ms = Value::make(0);
-	for (int i = 0; i < x.size(); i++) {
-		ms = ms + x[i] * x[i];
-	}
+	for (int i = 0; i < x.size(); i++) ms = ms + x[i] * x[i];
 	ms = ms / Value::make(x.size());
 	Value::Ptr scale = Value::pow(ms + Value::make(1e-5), -0.5);
 	vector<Value::Ptr> output;
-	for (int i = 0; i < x.size(); i++) {
-		output.push_back(x[i] * scale);
-	}
+	for (int i = 0; i < x.size(); i++) output.push_back(x[i] * scale);
 	return output;
 }
 
@@ -177,9 +137,7 @@ vector<Value::Ptr> gpt(int token_id, int pos_id, vector<vector<vector<Value::Ptr
 	vector<Value::Ptr> tok_emb = (*state_dict)["wte"][token_id]; // token embedding
 	vector<Value::Ptr> pos_emb = (*state_dict)["wpe"][pos_id];   // position embedding
 	vector<Value::Ptr> x;
-	for (int i = 0; i < tok_emb.size(); i++) {
-		x.push_back(tok_emb[i] + pos_emb[i]); 		// joint token and position embedding
-	}
+	for (int i = 0; i < tok_emb.size(); i++) x.push_back(tok_emb[i] + pos_emb[i]); // joint token and position embedding
 	x = rmsnorm(x); // note: not redundant due to backward pass via the residual connection
 
 
@@ -196,31 +154,23 @@ vector<Value::Ptr> gpt(int token_id, int pos_id, vector<vector<vector<Value::Ptr
 		for (int h = 0; h < n_head; h++) {
 			int hs = h * head_dim;
 			vector<Value::Ptr> q_h;
-			for (int hi = hs; hi < hs + head_dim; hi++) {
-				q_h.push_back(q[hi]);
-			}
+			for (int hi = hs; hi < hs + head_dim; hi++) q_h.push_back(q[hi]);
 			vector<vector<Value::Ptr>> k_h;
 			for (auto ki : (*keys)[li]) {
 				vector<Value::Ptr> kiv;
-				for (int hi = hs; hi < hs + head_dim; hi++) {
-					kiv.push_back(ki[hi]);
-				}
+				for (int hi = hs; hi < hs + head_dim; hi++) kiv.push_back(ki[hi]);
 				k_h.push_back(kiv);
 			}
 			vector<vector<Value::Ptr>> v_h;
 			for (auto vi : (*values)[li]) {
 				vector<Value::Ptr> viv;
-				for (int hi = hs; hi < hs + head_dim; hi++) {
-					viv.push_back(vi[hi]);
-				}
+				for (int hi = hs; hi < hs + head_dim; hi++) viv.push_back(vi[hi]);
 				v_h.push_back(viv);
 			}
 			vector<Value::Ptr> attn_logits;
 			for (int t = 0; t < k_h.size(); t++) {
 				Value::Ptr total = Value::make(0);
-				for (int j = 0; j < head_dim; j++) {
-					total = total + q_h[j] * k_h[t][j];
-				}
+				for (int j = 0; j < head_dim; j++) total = total + q_h[j] * k_h[t][j];
 				Value::Ptr head_dim_val = Value::make(head_dim);
 				Value::Ptr sqrt_head_dim = Value::pow(head_dim_val, 0.5);
 				total = total / sqrt_head_dim;
@@ -237,9 +187,7 @@ vector<Value::Ptr> gpt(int token_id, int pos_id, vector<vector<vector<Value::Ptr
 		}
 		x = linear(x_attn, (*state_dict)["layer{" + to_string(li) + "}.attn_wo"]);
 		vector<Value::Ptr> y;
-		for (int i = 0; i < x.size(); i++) {
-			y.push_back(x[i] + x_residual[i]);
-		}
+		for (int i = 0; i < x.size(); i++) y.push_back(x[i] + x_residual[i]);
 		x = y;
 
 		// 2) MLP block
@@ -248,16 +196,12 @@ vector<Value::Ptr> gpt(int token_id, int pos_id, vector<vector<vector<Value::Ptr
 		
 		x = linear(x, (*state_dict)["layer{" + to_string(li) + "}.mlp_fc1"]); 
 		y.clear();
-		for (int i = 0; i < x.size(); i++) {
-			y.push_back(Value::relu(x[i]));
-		}
+		for (int i = 0; i < x.size(); i++) y.push_back(Value::relu(x[i]));
 		x = y;
 
 		x = linear(x, (*state_dict)["layer{" + to_string(li) + "}.mlp_fc2"]); 
 		y.clear();
-		for (int i = 0; i < x.size(); i++) {
-			y.push_back(x[i] + x_residual[i]);
-		}
+		for (int i = 0; i < x.size(); i++) y.push_back(x[i] + x_residual[i]);
 		x = y;
 	}
 	vector<Value::Ptr> logits = linear(x, (*state_dict)["lm_head"]);
@@ -268,9 +212,7 @@ int main() {
 	// Let there be a Dataset `docs` of documents (e.g. a list of names)
 	vector<string> docs;
 	string doc;
-	while (cin >> doc) {
-		docs.push_back(doc);
-	}
+	while (cin >> doc) docs.push_back(doc);
 
 	mt19937 g(42);  // Let there be order among chaos
 	shuffle(docs.begin(), docs.end(), g);
@@ -278,15 +220,7 @@ int main() {
 
 	// Let there be a Tokenizer to translate strings to sequences of integers ("tokens") and back
 	set<char> uchars;
-	for (const auto& doc : docs) {
-		for (char ch : doc) {
-			uchars.insert(ch);
-		}
-	}
-	for (char ch : uchars) {
-		cout << ch << " ";
-	}
-	cout << endl;
+	for (const auto& doc : docs) for (char ch : doc) uchars.insert(ch);
 	int BOS = uchars.size();
 	int vocab_size = uchars.size() + 1;
 	cout << "Vocab size: " << vocab_size << endl;
@@ -304,7 +238,7 @@ int main() {
 	token_to_ch[BOS] = '.';
 
 	// Initialize the parameters, to store the knowledge of the model
-	int n_layer = 1;     // depth of the transformer neural network (number of layers)
+	int n_layer = 4;     // depth of the transformer neural network (number of layers)
 	int n_embd = 16;     // width of the network (embedding dimension)
 	int block_size = 16; // maximum context length of the attention window (note: the longest name is 15 characters)
 	int n_head = 4;      // number of attention heads
@@ -326,11 +260,7 @@ int main() {
 	vector<Value::Ptr> params;
 	for (auto& pair : state_dict) {
 		auto& vv = pair.second;
-		for (int i = 0; i < vv.size(); i++) {
-			for (int j = 0; j < vv[i].size(); j++) {
-				params.push_back(vv[i][j]);
-			}
-		}
+		for (int i = 0; i < vv.size(); i++) for (int j = 0; j < vv[i].size(); j++) params.push_back(vv[i][j]);
 	}
 	cout << "Num params: " << params.size() << endl;
 
@@ -343,7 +273,7 @@ int main() {
 	vector<float> v(params.size(), 0.0); // second moment buffer
 	
 	// Repeat in sequence
-	int num_steps = 2000; // number of training steps
+	int num_steps = 1000; // number of training steps
 	for (int step = 0; step < num_steps; step++) {
 		//  Take single document, tokenize it, surround it with BOS special token on both sides
 		string doc = docs[step % docs.size()];
@@ -368,7 +298,6 @@ int main() {
 			Value::Ptr neg1 = Value::make(-1);
 			Value::Ptr logprob = Value::log(probs[target_id]);
 			Value::Ptr loss_t = neg1 * logprob;
-			// cout << "loss_t = " << loss_t << endl;
 			losses.push_back(loss_t);
 			sum_losses = sum_losses + loss_t;
 		}
@@ -380,18 +309,16 @@ int main() {
 		// Adam optimizer update: update the model parameters based on the corresponding gradients
 		float lr_t = learning_rate * (1 - step / num_steps); // linear learning rate decay
 		for (int i = 0; i < params.size(); i++) {
-			float grad = params[i]->get_grad();
+			float grad = params[i]->grad;
 			m[i] = beta1 * m[i] + (1 - beta1) * grad;
 			v[i] = beta2 * v[i] + (1 - beta2) * grad * grad;
 			float m_hat = m[i] / (1 - pow(beta1, step + 1));
 			float v_hat = v[i] / (1 - pow(beta2, step + 1));
-			params[i]->set_data(params[i]->get_data() - lr_t * m_hat / (pow(v_hat, 0.5) + eps_adam)); 
-			params[i]->reset_grad();
+			params[i]->data -= lr_t * m_hat / (pow(v_hat, 0.5) + eps_adam); 
+			params[i]->grad = 0;
 		}
 
-		if ((step+1) % 100 == 0) {
-			cout << "Step " << (step+1) << " / " << num_steps << " | loss = " << setprecision(6) << loss->get_data() << endl;
-		}
+		if ((step+1) % 100 == 0) cout << "Step " << (step+1) << " / " << num_steps << " | loss = " << setprecision(6) << loss->data << endl;
 	}
 
 	// Inference: may the model babble back to us
@@ -405,19 +332,14 @@ int main() {
 		for (int pos_id = 0; pos_id < block_size; pos_id++) {
 			vector<Value::Ptr> logits = gpt(token_id, pos_id, &keys, &values, &state_dict, n_layer, n_head, head_dim);
 			vector<Value::Ptr> tempered_logits;
-			for (auto& val : logits) {
-				tempered_logits.push_back(val / Value::make(temperature));
-			}
+			for (auto& val : logits) tempered_logits.push_back(val / Value::make(temperature));
 			vector<Value::Ptr> probs = softmax(tempered_logits);
 			vector<float> weights;
-			for (auto& prob : probs) {
-				weights.push_back(prob->get_data());
-			}
+			for (auto& prob : probs) weights.push_back(prob->data);
 			std::discrete_distribution<int> distribution(weights.begin(), weights.end());
 			int token_id = distribution(g);
-			if (token_id == BOS) {
+			if (token_id == BOS)
 				break;
-			}
 			sample += token_to_ch[token_id];
 		}
 		cout << "Sample " << sample_idx << " : " << sample << endl;
