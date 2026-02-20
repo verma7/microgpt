@@ -186,23 +186,17 @@ vector<Value::Ptr> gpt(int token_id, int pos_id, vector<vector<vector<Value::Ptr
 			}
 		}
 		x = linear(x_attn, (*state_dict)["layer{" + to_string(li) + "}.attn_wo"]);
-		vector<Value::Ptr> y;
-		for (int i = 0; i < x.size(); i++) y.push_back(x[i] + x_residual[i]);
-		x = y;
+		for (int i = 0; i < x.size(); i++) x[i] = x[i] + x_residual[i];
 
 		// 2) MLP block
 		x_residual = x;
 		x = rmsnorm(x);
 		
 		x = linear(x, (*state_dict)["layer{" + to_string(li) + "}.mlp_fc1"]); 
-		y.clear();
-		for (int i = 0; i < x.size(); i++) y.push_back(Value::relu(x[i]));
-		x = y;
+		for (int i = 0; i < x.size(); i++) x[i] = Value::relu(x[i]);
 
 		x = linear(x, (*state_dict)["layer{" + to_string(li) + "}.mlp_fc2"]); 
-		y.clear();
-		for (int i = 0; i < x.size(); i++) y.push_back(x[i] + x_residual[i]);
-		x = y;
+		for (int i = 0; i < x.size(); i++) x[i] = x[i] + x_residual[i];
 	}
 	vector<Value::Ptr> logits = linear(x, (*state_dict)["lm_head"]);
 	return logits;
@@ -215,6 +209,7 @@ int main() {
 	while (cin >> doc) docs.push_back(doc);
 
 	mt19937 g(42);  // Let there be order among chaos
+	// mt19937 g(std::random_device{}());
 	shuffle(docs.begin(), docs.end(), g);
 	cout << "Num docs: " << docs.size() << endl;
 
