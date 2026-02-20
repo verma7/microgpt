@@ -120,7 +120,7 @@ vector<Value::Ptr> linear(vector<Value::Ptr> &x,
 }
 
 vector<Value::Ptr> softmax(vector<Value::Ptr> &logits) {
-  float max_val = numeric_limits<float>::min();
+  float max_val = numeric_limits<float>::lowest();
   for (int i = 0; i < logits.size(); i++)
     max_val = max(max_val, logits[i]->data);
   vector<Value::Ptr> exps;
@@ -313,7 +313,7 @@ int main() {
   vector<float> v(params.size(), 0.0); // second moment buffer
 
   // Repeat in sequence
-  int num_steps = 1000; // number of training steps
+  int num_steps = 2000; // number of training steps
   for (int step = 0; step < num_steps; step++) {
     //  Take single document, tokenize it, surround it with BOS special token on
     //  both sides
@@ -355,7 +355,7 @@ int main() {
     // Adam optimizer update: update the model parameters based on the
     // corresponding gradients
     float lr_t =
-        learning_rate * (1 - step / num_steps); // linear learning rate decay
+        learning_rate * (1 - static_cast<float>(step) / num_steps); // linear learning rate decay
     for (int i = 0; i < params.size(); i++) {
       float grad = params[i]->grad;
       m[i] = beta1 * m[i] + (1 - beta1) * grad;
@@ -394,7 +394,7 @@ int main() {
         weights.push_back(prob->data);
       std::discrete_distribution<int> distribution(weights.begin(),
                                                    weights.end());
-      int token_id = distribution(g);
+      token_id = distribution(g);
       if (token_id == BOS)
         break;
       sample += token_to_ch[token_id];
