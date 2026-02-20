@@ -355,7 +355,8 @@ int main() {
     // Adam optimizer update: update the model parameters based on the
     // corresponding gradients
     float lr_t =
-        learning_rate * (1 - static_cast<float>(step) / num_steps); // linear learning rate decay
+        learning_rate * (1 - static_cast<float>(step) /
+                                 num_steps); // linear learning rate decay
     for (int i = 0; i < params.size(); i++) {
       float grad = params[i]->grad;
       m[i] = beta1 * m[i] + (1 - beta1) * grad;
