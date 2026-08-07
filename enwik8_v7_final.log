@@ -1,0 +1,22 @@
+config: layers=6 embd=128 heads=8 hidden=344 block=256 mlp=swiglu rope=1 tie=1 finalnorm=1 gains=1 residscale=1 dwconv=1 valres=0 attngate=0 qknorm=0 softmax1=1 batch=16 threads=8 blas=1 steps=30000 lr=0.001 seed=42 params=1224960 | data: train=90000000 val=5000000 test=5000000
+step 2000 | train bpc 3.042 | val bpc 2.22 | 130148 tok/s
+step 4000 | train bpc 2.106 | val bpc 2.03 | 128241 tok/s
+step 6000 | train bpc 1.971 | val bpc 1.954 | 127819 tok/s
+step 8000 | train bpc 1.901 | val bpc 1.895 | 114541 tok/s
+step 10000 | train bpc 1.84 | val bpc 1.851 | 98845 tok/s
+step 12000 | train bpc 1.797 | val bpc 1.817 | 100216 tok/s
+step 14000 | train bpc 1.761 | val bpc 1.781 | 102833 tok/s
+step 16000 | train bpc 1.729 | val bpc 1.765 | 105110 tok/s
+step 18000 | train bpc 1.699 | val bpc 1.743 | 107022 tok/s
+step 20000 | train bpc 1.681 | val bpc 1.724 | 108757 tok/s
+step 22000 | train bpc 1.669 | val bpc 1.711 | 110125 tok/s
+step 24000 | train bpc 1.649 | val bpc 1.697 | 111286 tok/s
+step 26000 | train bpc 1.643 | val bpc 1.691 | 112370 tok/s
+step 28000 | train bpc 1.639 | val bpc 1.687 | 113250 tok/s
+step 30000 | train bpc 1.636 | val bpc 1.687 | 113982 tok/s
+RESULT params=1224960 val_bpc=1.6792 test_bpc=1.673
+saved enwik8_model_v7.bin
+--- sample (primed with 64 bytes of val) ---
+hey are stated representations, e.g. and animals to make the area of the ed.  They are consumed by the essential problems.
+
+To the balance of a [[category]] reaction in a member of the edges. The system of these networks are more information for categories, with the concern accent. There extensively cheap incomplete models in a lower [[December 2005]] number of eyes, which allows the creation of [[survivor]]s to [[created programme]]s on the attainment of an accountable C-start. The BC is the pre-expression
