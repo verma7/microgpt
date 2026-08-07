@@ -1,0 +1,33 @@
+config: layers=10 embd=384 heads=12 hidden=1024 block=512 mlp=swiglu rope=1 tie=1 finalnorm=1 gains=1 residscale=1 dwconv=1 valres=0 attngate=0 qknorm=0 softmax1=1 muon=1 valemb=0 softcap=0 batch=16 threads=8 blas=1 steps=60000 lr=0.0005 seed=42 params=17824512 | data: train=90000000 val=5000000 test=5000000
+step 2000 | train bpc 2.854 | val bpc 1.879 | 15969 tok/s
+step 4000 | train bpc 1.77 | val bpc 1.762 | 15882 tok/s
+step 6000 | train bpc 1.702 | val bpc 1.72 | 15853 tok/s
+step 8000 | train bpc 1.667 | val bpc 1.698 | 15838 tok/s
+step 10000 | train bpc 1.643 | val bpc 1.671 | 15830 tok/s
+step 12000 | train bpc 1.624 | val bpc 1.659 | 15824 tok/s
+step 14000 | train bpc 1.607 | val bpc 1.642 | 15820 tok/s
+step 16000 | train bpc 1.595 | val bpc 1.638 | 15817 tok/s
+step 18000 | train bpc 1.579 | val bpc 1.625 | 15814 tok/s
+step 20000 | train bpc 1.569 | val bpc 1.605 | 15813 tok/s
+step 22000 | train bpc 1.555 | val bpc 1.601 | 15812 tok/s
+step 24000 | train bpc 1.542 | val bpc 1.587 | 15810 tok/s
+step 26000 | train bpc 1.529 | val bpc 1.576 | 15809 tok/s
+step 28000 | train bpc 1.517 | val bpc 1.566 | 15808 tok/s
+step 30000 | train bpc 1.502 | val bpc 1.554 | 15807 tok/s
+step 32000 | train bpc 1.489 | val bpc 1.542 | 15806 tok/s
+step 34000 | train bpc 1.47 | val bpc 1.525 | 15805 tok/s
+step 36000 | train bpc 1.459 | val bpc 1.513 | 15805 tok/s
+step 38000 | train bpc 1.441 | val bpc 1.497 | 15805 tok/s
+step 40000 | train bpc 1.423 | val bpc 1.484 | 15805 tok/s
+step 42000 | train bpc 1.407 | val bpc 1.465 | 15802 tok/s
+step 44000 | train bpc 1.391 | val bpc 1.445 | 15800 tok/s
+step 46000 | train bpc 1.364 | val bpc 1.435 | 15800 tok/s
+step 48000 | train bpc 1.352 | val bpc 1.417 | 15799 tok/s
+step 50000 | train bpc 1.332 | val bpc 1.403 | 15798 tok/s
+step 52000 | train bpc 1.314 | val bpc 1.388 | 15796 tok/s
+step 54000 | train bpc 1.296 | val bpc 1.375 | 15796 tok/s
+step 56000 | train bpc 1.285 | val bpc 1.367 | 15797 tok/s
+step 58000 | train bpc 1.273 | val bpc 1.362 | 15797 tok/s
+step 60000 | train bpc 1.268 | val bpc 1.361 | 15797 tok/s
+RESULT params=17824512 val_bpc=1.2491 test_bpc=1.2256
+saved enwik8_r3.bin
