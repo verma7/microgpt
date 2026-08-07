@@ -1,0 +1,6 @@
+modernbase | step 2000 | train bpc 2.428 | val bpc 2.315 | 127043 tok/s | params=1220352
+dwconv | step 2000 | train bpc 2.385 | val bpc 2.283 | 126122 tok/s | params=1224960
+valres | step 2000 | train bpc 2.428 | val bpc 2.322 | 129807 tok/s | params=1220992
+attngate | step 2000 | train bpc 2.445 | val bpc 2.333 | 117588 tok/s | params=1318656
+qknorm | step 2000 | train bpc 2.479 | val bpc 2.359 | 120923 tok/s | params=1220400
+softmax1 | step 2000 | train bpc 2.42 | val bpc 2.308 | 125016 tok/s | params=1220352
