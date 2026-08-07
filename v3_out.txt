@@ -1,0 +1,45 @@
+Num docs: 32033
+Vocab size: 27
+Num params: 13408
+Step 100 / 2000 | loss = 2.69806
+Step 200 / 2000 | loss = 2.5636
+Step 300 / 2000 | loss = 2.7229
+Step 400 / 2000 | loss = 3.48652
+Step 500 / 2000 | loss = 1.92771
+Step 600 / 2000 | loss = 2.84044
+Step 700 / 2000 | loss = 2.9013
+Step 800 / 2000 | loss = 2.53108
+Step 900 / 2000 | loss = 2.62189
+Step 1000 / 2000 | loss = 2.80428
+Step 1100 / 2000 | loss = 2.32844
+Step 1200 / 2000 | loss = 2.84812
+Step 1300 / 2000 | loss = 2.46542
+Step 1400 / 2000 | loss = 2.15648
+Step 1500 / 2000 | loss = 1.96369
+Step 1600 / 2000 | loss = 2.08409
+Step 1700 / 2000 | loss = 2.16575
+Step 1800 / 2000 | loss = 1.92145
+Step 1900 / 2000 | loss = 2.57321
+Step 2000 / 2000 | loss = 1.92065
+
+--- inference (new, hallucinated names) ---
+Sample 0 : karia
+Sample 1 : anisa
+Sample 2 : jaril
+Sample 3 : jaleni
+Sample 4 : maruan
+Sample 5 : brana
+Sample 6 : belia
+Sample 7 : daelid
+Sample 8 : zaniee
+Sample 9 : mauma
+Sample 10 : jarda
+Sample 11 : 
+Sample 12 : karia
+Sample 13 : kaina
+Sample 14 : dathin
+Sample 15 : kari
+Sample 16 : rachan
+Sample 17 : garyle
+Sample 18 : bra
+Sample 19 : jaron

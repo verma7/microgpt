@@ -1,0 +1,8 @@
+e32_base seed=42 RESULT params=51392 val_loss=2.16693 novel=50.8
+e32_base seed=43 RESULT params=51392 val_loss=inf novel=52.4
+e32_mod seed=42 RESULT params=49888 val_loss=2.27485 novel=65.4
+e32_mod seed=43 RESULT params=49888 val_loss=2.25006 novel=58.8
+e64_base seed=42 RESULT params=201088 val_loss=2.1972 novel=54.8
+e64_base seed=43 RESULT params=201088 val_loss=2.19978 novel=53.8
+e64_mod seed=42 RESULT params=198592 val_loss=2.2981 novel=65.8
+e64_mod seed=43 RESULT params=198592 val_loss=2.29297 novel=64.6

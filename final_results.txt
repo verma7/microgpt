@@ -1,0 +1,4 @@
+e32_base_b8_16k seed=42 RESULT params=51392 val_loss=2.06177 novel=37.8
+e32_base_b8_16k seed=43 RESULT params=51392 val_loss=2.07298 novel=37.4
+e32_base_b8_32k seed=42 RESULT params=51392 val_loss=2.05091 novel=40.8
+e32_fng_b8_32k seed=42 RESULT params=51712 val_loss=2.04403 novel=31.8

@@ -1,0 +1,41 @@
+config: layers=4 embd=32 heads=4 hidden=128 mlp=relu rope=0 tie=0 finalnorm=1 residscale=0 gains=1 batch=8 steps=32000 lr=0.01 seed=42 params=51712
+step 2000 | train(avg) = 2.3272 | val = 2.2589
+step 4000 | train(avg) = 2.2359 | val = 2.226
+step 6000 | train(avg) = 2.205 | val = 2.1909
+step 8000 | train(avg) = 2.1781 | val = 2.1644
+step 10000 | train(avg) = 2.1646 | val = 2.1461
+step 12000 | train(avg) = 2.1423 | val = 2.1289
+step 14000 | train(avg) = 2.1316 | val = 2.1165
+step 16000 | train(avg) = 2.115 | val = 2.1124
+step 18000 | train(avg) = 2.1049 | val = 2.0905
+step 20000 | train(avg) = 2.0926 | val = 2.0863
+step 22000 | train(avg) = 2.0801 | val = 2.083
+step 24000 | train(avg) = 2.0723 | val = 2.0717
+step 26000 | train(avg) = 2.0557 | val = 2.0646
+step 28000 | train(avg) = 2.0499 | val = 2.054
+step 30000 | train(avg) = 2.0346 | val = 2.0489
+step 32000 | train(avg) = 2.0282 | val = 2.044
+
+--- samples ---
+Sample 0 : teeri
+Sample 1 : kaylee
+Sample 2 : lucher
+Sample 3 : shana
+Sample 4 : jamir
+Sample 5 : alexia
+Sample 6 : lillia
+Sample 7 : maresh
+Sample 8 : nataleigh
+Sample 9 : reyne
+Sample 10 : kailan
+Sample 11 : janai
+Sample 12 : carris
+Sample 13 : saia
+Sample 14 : andrice
+Sample 15 : damira
+Sample 16 : emrick
+Sample 17 : andree
+Sample 18 : jaylin
+Sample 19 : kenny
+novel = 31.8% unique = 88.8%
+RESULT params=51712 val_loss=2.04403 novel=31.8
