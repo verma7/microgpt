@@ -51,3 +51,38 @@ and −0.063 from evaluating with proper context. Checkpoint:
 
 Scaling runs toward lower bpc (larger models, longer context, weight decay,
 longer training) are logged in [enwik8_r2.log](enwik8_r2.log) and successors.
+
+# V8: speedrun-literature techniques
+
+[microgpt_v8.cc](microgpt_v8.cc) implements the highest-ROI ideas from the
+2024–25 nanoGPT-speedrun line of work
+([modded-nanogpt](https://github.com/KellerJordan/modded-nanogpt),
+[Muon](https://kellerjordan.github.io/posts/muon/)):
+
+- `--muon` — **Muon optimizer** for hidden matrices: Nesterov momentum
+  (warmed 0.85→0.95) orthogonalized by 5 Newton–Schulz iterations with the
+  quintic coefficients (3.4445, −4.7750, 2.0315), step scaled by
+  √max(1, rows/cols); embeddings/head/vector params stay on AdamW. Pure
+  GEMM work, ~8% step overhead in this engine, threaded across matrices.
+- `--mlp relu2` — ReLU² activation
+- `--valemb` — per-layer zero-init token→value embedding tables
+- `--softcap C` — logit soft-capping C·tanh(z/C)
+- LR floor at 0.1× peak on the cosine schedule.
+
+Ablation on top of the V7 winner stack (E=128, L=6, T=256, 8M tokens):
+
+| Config | val bpc | Δ |
+|---|---:|---:|
+| V7 winner stack (AdamW) | 2.255 | — |
+| **+ Muon (lr 0.02)** | **2.016** | **−0.239** |
+| + Muon (lr 0.01) | 2.016 | −0.239 |
+| + Muon (lr 0.04) | 2.094 | −0.161 |
+| + ReLU² (AdamW, param-matched) | 2.229 | −0.026 |
+| + Muon + ReLU² | 2.027 | −0.228 |
+| + Muon + valemb | 2.027 | −0.228 |
+| + softcap 15 | 2.255 | 0 |
+
+**Muon is the single largest improvement in this entire project** —
+−0.24 bpc at equal token budget, dwarfing every architecture change.
+Under Muon, SwiGLU retains a small edge over ReLU²; value embeddings and
+softcap are neutral at this scale/budget. Final recipe: V7 stack + Muon.
