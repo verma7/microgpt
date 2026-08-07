@@ -1,0 +1,5 @@
+config: layers=6 embd=128 heads=8 hidden=512 block=256 mlp=relu rope=0 tie=0 finalnorm=1 gains=1 residscale=1 batch=16 threads=8 blas=1 steps=2000 lr=0.001 seed=42 params=1279744 | data: train=90000000 val=5000000 test=5000000
+step 500 | train bpc 4.688 | val bpc 3.684 | 136854 tok/s
+step 1000 | train bpc 3.44 | val bpc 3.119 | 124801 tok/s
+step 1500 | train bpc 2.97 | val bpc 2.821 | 117795 tok/s
+step 2000 | train bpc 2.771 | val bpc 2.739 | 111861 tok/s

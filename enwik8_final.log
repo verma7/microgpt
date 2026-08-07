@@ -1,0 +1,20 @@
+config: layers=6 embd=128 heads=8 hidden=344 block=256 mlp=swiglu rope=1 tie=1 finalnorm=1 gains=1 residscale=1 batch=16 threads=8 blas=1 steps=30000 lr=0.001 seed=42 params=1220352 | data: train=90000000 val=5000000 test=5000000
+step 2000 | train bpc 3.08 | val bpc 2.285 | 124824 tok/s
+step 4000 | train bpc 2.167 | val bpc 2.086 | 124591 tok/s
+step 6000 | train bpc 2.028 | val bpc 1.997 | 123262 tok/s
+step 8000 | train bpc 1.958 | val bpc 1.944 | 122378 tok/s
+step 10000 | train bpc 1.898 | val bpc 1.898 | 121832 tok/s
+step 12000 | train bpc 1.848 | val bpc 1.86 | 121725 tok/s
+step 14000 | train bpc 1.814 | val bpc 1.826 | 121637 tok/s
+step 16000 | train bpc 1.774 | val bpc 1.796 | 121130 tok/s
+step 18000 | train bpc 1.743 | val bpc 1.776 | 119603 tok/s
+step 20000 | train bpc 1.72 | val bpc 1.761 | 119542 tok/s
+step 22000 | train bpc 1.707 | val bpc 1.741 | 119790 tok/s
+step 24000 | train bpc 1.687 | val bpc 1.73 | 120082 tok/s
+step 26000 | train bpc 1.679 | val bpc 1.723 | 120348 tok/s
+step 28000 | train bpc 1.674 | val bpc 1.718 | 120679 tok/s
+step 30000 | train bpc 1.669 | val bpc 1.717 | 121096 tok/s
+RESULT params=1220352 val_bpc=1.7119 test_bpc=1.7065
+saved enwik8_model.bin
+--- sample (primed with 64 bytes of val) ---
+hese contrasts are not designed to be independently head of particularly focusing on the short-version of the anime and transvestion for a receiving standard, and failed to other congregational amputees of the Republican Chinese Amplifiers meant that remained a state of that added it is always one of the defensive nature of the articles of [[equilibrium|explicit]]s.  The tradestinian credible effects of the project that their snap by [[Savathato the Savantas]] and [[Nobel crediteration in the United States]
