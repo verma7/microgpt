@@ -31,3 +31,7 @@ step 58000 | train bpc 1.273 | val bpc 1.362 | 15797 tok/s
 step 60000 | train bpc 1.268 | val bpc 1.361 | 15797 tok/s
 RESULT params=17824512 val_bpc=1.2491 test_bpc=1.2256
 saved enwik8_r3.bin
+--- sample (primed with 64 bytes of val) ---
+hese crops were constructed in the United States in [[1807]], enthusiastically the [[Kimbies]], and are sometimes used today.  These crops were also sold to the [[Canadian Mountains]], where out of the [[Little Chilean]] and [[La Monte]] crops were used to hundreds of thousand [[personnel in the country]], but to provide a major rural observation in southern [[Layout]] and [[Cornwall]].
+
+The [[Bodes of the Plateau|Holy Branch]] is assigned to the [[Holy Oscillator]]. The Holy Oscillator is assigned to the [
