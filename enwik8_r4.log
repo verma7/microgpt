@@ -1,0 +1,20 @@
+config: layers=10 embd=384 heads=12 hidden=1024 block=1024 mlp=swiglu rope=1 tie=1 finalnorm=1 gains=1 residscale=1 dwconv=1 valres=0 attngate=0 qknorm=0 softmax1=1 muon=1 valemb=0 softcap=0 batch=16 threads=8 blas=1 steps=10000 lr=0.0002 seed=42 params=17824512 | data: train=90000000 val=5000000 test=5000000
+step 1000 | train bpc 1.326 | val bpc 1.425 | 12529 tok/s
+step 2000 | train bpc 1.343 | val bpc 1.398 | 12460 tok/s
+step 3000 | train bpc 1.319 | val bpc 1.38 | 12436 tok/s
+step 4000 | train bpc 1.293 | val bpc 1.357 | 12427 tok/s
+step 5000 | train bpc 1.269 | val bpc 1.331 | 12420 tok/s
+step 6000 | train bpc 1.237 | val bpc 1.309 | 12415 tok/s
+step 7000 | train bpc 1.208 | val bpc 1.288 | 12412 tok/s
+step 8000 | train bpc 1.172 | val bpc 1.266 | 12410 tok/s
+step 9000 | train bpc 1.146 | val bpc 1.247 | 12409 tok/s
+step 10000 | train bpc 1.126 | val bpc 1.239 | 12407 tok/s
+RESULT params=17824512 val_bpc=1.153 test_bpc=1.1312
+saved enwik8_r4.bin
+--- sample (primed with 64 bytes of val) ---
+hese areas were considered accurate by the decentralized population, due to their population and population.  Constitutionalization also considers an effective agreement to indicate consensus votes; generally, a person of a government is intended to decide to accuse any point in their political orientation in the population.
+
+===Public Gold representations===
+These public management and redistribution systems sometimes are the most widely available on previous decisions.
+
+What official meetings about how to
