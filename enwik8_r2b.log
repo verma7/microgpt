@@ -1,0 +1,27 @@
+config: layers=8 embd=256 heads=8 hidden=688 block=512 mlp=swiglu rope=1 tie=1 finalnorm=1 gains=1 residscale=1 dwconv=1 valres=0 attngate=0 qknorm=0 softmax1=1 muon=1 valemb=0 softcap=0 batch=16 threads=8 blas=1 steps=40000 lr=0.0007 seed=42 params=6406656 | data: train=90000000 val=5000000 test=5000000
+step 2000 | train bpc 2.687 | val bpc 1.887 | 36546 tok/s
+step 4000 | train bpc 1.789 | val bpc 1.788 | 36318 tok/s
+step 6000 | train bpc 1.722 | val bpc 1.746 | 36239 tok/s
+step 8000 | train bpc 1.688 | val bpc 1.716 | 36197 tok/s
+step 10000 | train bpc 1.662 | val bpc 1.7 | 36173 tok/s
+step 12000 | train bpc 1.642 | val bpc 1.681 | 36154 tok/s
+step 14000 | train bpc 1.624 | val bpc 1.669 | 36133 tok/s
+step 16000 | train bpc 1.603 | val bpc 1.644 | 36119 tok/s
+step 18000 | train bpc 1.581 | val bpc 1.628 | 36111 tok/s
+step 20000 | train bpc 1.566 | val bpc 1.603 | 36103 tok/s
+step 22000 | train bpc 1.545 | val bpc 1.589 | 36099 tok/s
+step 24000 | train bpc 1.518 | val bpc 1.568 | 36094 tok/s
+step 26000 | train bpc 1.502 | val bpc 1.545 | 36088 tok/s
+step 28000 | train bpc 1.475 | val bpc 1.52 | 36085 tok/s
+step 30000 | train bpc 1.447 | val bpc 1.503 | 36082 tok/s
+step 32000 | train bpc 1.422 | val bpc 1.48 | 36078 tok/s
+step 34000 | train bpc 1.397 | val bpc 1.454 | 36077 tok/s
+step 36000 | train bpc 1.376 | val bpc 1.437 | 36076 tok/s
+step 38000 | train bpc 1.36 | val bpc 1.428 | 36072 tok/s
+step 40000 | train bpc 1.348 | val bpc 1.422 | 36070 tok/s
+RESULT params=6406656 val_bpc=1.315 test_bpc=1.2909
+saved enwik8_r2b.bin
+--- sample (primed with 64 bytes of val) ---
+hey are reasonably more and less adequate than they are around and possibly well recognized.  They can be logged over to the west of the United Kingdom and most of Pakistan's regions in the west and a major tower in the [[Damascus]] island.  Some countries currently expand the Hastings and unite their own former Hastings and offers an imperial richness to locate with the states of [[Baudelaire, Natures, and Streets]] and Spring for the mayors of the city were found today at Baudelaire.
+
+In some cases, the H
