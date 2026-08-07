@@ -36,3 +36,18 @@ numerical checker (`--gradcheck`). Findings from ~70 training runs are in
 c++ -O3 -std=c++17 microgpt_v5.cc -o microgpt_v5
 ./microgpt_v5 --embd 32 --hidden 128 --steps 32000 --batch 8 --gains --finalnorm < names.txt
 ```
+
+## enwik8 (Hutter Prize)
+
+[microgpt_v6.cc](microgpt_v6.cc) scales the engine to a real benchmark:
+byte-level LM on the first 100 MB of Wikipedia. Sequence-level GEMMs
+(Apple Accelerate) + threaded data parallelism take throughput from 433 to
+141k tok/s (327×), and the "modern" components that were useless on
+names.txt win by 0.45 bpc here. **1.71 test bpc with 1.2M params in ~28
+minutes of laptop CPU.** Full story in [ENWIK8.md](ENWIK8.md).
+
+```bash
+curl -sL -o enwik8.zip http://mattmahoney.net/dc/enwik8.zip && unzip enwik8.zip
+c++ -O3 -std=c++17 microgpt_v6.cc -o microgpt_v6 -DUSE_ACCELERATE -DACCELERATE_NEW_LAPACK -framework Accelerate
+./microgpt_v6 --threads 8 --steps 30000 --rope --tie --finalnorm --gains --residscale --mlp swiglu --hidden 344
+```

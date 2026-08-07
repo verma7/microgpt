@@ -1,0 +1,3 @@
+plain step 2000 | train bpc 2.79 | val bpc 2.761 | 131851 tok/s
+mid step 2000 | train bpc 2.771 | val bpc 2.739 | 111861 tok/s
+modern step 2000 | train bpc 2.349 | val bpc 2.315 | 92839 tok/s
