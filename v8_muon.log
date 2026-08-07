@@ -1,0 +1,3 @@
+config: layers=6 embd=128 heads=8 hidden=344 block=256 mlp=swiglu rope=1 tie=1 finalnorm=1 gains=1 residscale=1 dwconv=1 valres=0 attngate=0 qknorm=0 softmax1=1 muon=1 valemb=0 softcap=0 batch=16 threads=4 blas=1 steps=2000 lr=0.001 seed=42 params=1224960 | data: train=90000000 val=5000000 test=5000000
+step 1000 | train bpc 3.372 | val bpc 2.279 | 55178 tok/s
+step 2000 | train bpc 2.119 | val bpc 2.016 | 53425 tok/s

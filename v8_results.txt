@@ -1,0 +1,5 @@
+base | step 2000 | train bpc 2.382 | val bpc 2.255 | 58167 tok/s
+muon | step 2000 | train bpc 2.119 | val bpc 2.016 | 53425 tok/s
+relu2 | step 2000 | train bpc 2.353 | val bpc 2.229 | 60129 tok/s
+valemb | step 2000 | train bpc 2.389 | val bpc 2.258 | 54463 tok/s
+softcap | step 2000 | train bpc 2.38 | val bpc 2.255 | 53302 tok/s

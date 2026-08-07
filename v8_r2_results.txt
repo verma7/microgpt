@@ -1,0 +1,4 @@
+muon_lr01 | step 2000 | train bpc 2.115 | val bpc 2.016 | 58747 tok/s
+muon_lr04 | step 2000 | train bpc 2.209 | val bpc 2.094 | 60613 tok/s
+muon_relu2 | step 2000 | train bpc 2.13 | val bpc 2.027 | 64631 tok/s
+muon_relu2_ve | step 2000 | train bpc 2.135 | val bpc 2.027 | 64035 tok/s
