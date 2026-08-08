@@ -1,0 +1,2 @@
+RESULT params=17824512 val_bpc=1.1347 test_bpc=1.1139
+DYNRESULT dyneval_lr=2e-05 dynbatch=2 stride=256 val_bpc=1.122 test_bpc=1.0943

@@ -1,0 +1,2 @@
+DYNRESULT dyneval_lr=2e-05 dynbatch=4 stride=512 val_bpc=1.1417
+DYNRESULT dyneval_lr=5e-05 dynbatch=4 stride=512 val_bpc=1.1489
