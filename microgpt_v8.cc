@@ -139,6 +139,9 @@ struct Config {
        softmax1 = false;
   bool muon = false, valemb = false;
   float muonlr = 0.02f, softcap = 0.0f;
+  float dyneval = 0.0f; // dynamic-evaluation LR (0 = off)
+  int dynbatch = 4;     // windows per dynamic-eval update
+  bool dynvalonly = false; // skip test split in DYNRESULT (for tuning)
   string mlp = "relu";
   string data = "enwik8";
   string save = "", load = "";
@@ -284,6 +287,7 @@ struct Workspace {
   vector<float> dX, dXn, dQ, dK, dV, dAttn, dH1, dS, dRow, dMin;
   vector<float> dXs, dV0acc, dGp;
   vector<float> CapT; // softcap tanh values, [T,V]
+  vector<float> nll;  // per-position -log p(target), filled every forward
   double loss_sum = 0;
   long tok_count = 0;
 
@@ -321,6 +325,7 @@ struct Workspace {
     z(dXs, (size_t)T * E);
     if (m->cfg.softcap > 0)
       z(CapT, (size_t)T * Model::V);
+    z(nll, (size_t)T);
   }
 
   // rmsnorm rows of X[T,E] -> Y, scales into sr[srow*T + t], optional gains
@@ -642,7 +647,8 @@ struct Workspace {
       float inv = 1.0f / tot;
       for (int j = 0; j < Vc; j++)
         row[j] *= inv;
-      loss += -logf(row[tokens[t + 1]] + 1e-12f);
+      nll[t] = -logf(row[tokens[t + 1]] + 1e-12f);
+      loss += nll[t];
     }
     loss /= T_;
     if (!accumulate_grads)
@@ -905,6 +911,9 @@ int main(int argc, char **argv) {
     else if (a == "--gradcheck") cfg.gradcheck = true;
     else if (a == "--noblas") cfg.noblas = true;
     else if (a == "--nofinal") cfg.nofinal = true;
+    else if (a == "--dyneval") cfg.dyneval = stof(next());
+    else if (a == "--dynbatch") cfg.dynbatch = stoi(next());
+    else if (a == "--dynvalonly") cfg.dynvalonly = true;
     else if (a == "--muon") cfg.muon = true;
     else if (a == "--muonlr") cfg.muonlr = stof(next());
     else if (a == "--valemb") cfg.valemb = true;
@@ -1197,13 +1206,100 @@ int main(int argc, char **argv) {
     }
   }
 
+  // Dynamic evaluation (Krause et al. style, batched-sequential): walk the
+  // range in order; each batch of consecutive windows is scored BEFORE the
+  // small AdamW update that adapts the model to it (leakage-free). Params
+  // restored afterwards.
+  auto dyn_eval_range = [&](long start, long nbytes) {
+    vector<float> P0 = model.P;
+    vector<float> dm(model.NP, 0.0f), dvv(model.NP, 0.0f);
+    int T = cfg.block;
+    int stride = cfg.evalstride > 0 ? cfg.evalstride : T;
+    long step_ = stride;
+    long nwin = max(1L, (nbytes - (long)(T - stride)) / step_);
+    double total = 0;
+    long cnt = 0;
+    int tstep = 0;
+    vector<double> bsum(cfg.threads);
+    vector<long> bcnt(cfg.threads);
+    for (long w0 = 0; w0 < nwin; w0 += cfg.dynbatch) {
+      int nb = (int)min<long>(cfg.dynbatch, nwin - w0);
+      atomic<int> next_b(0);
+      vector<thread> th;
+      for (int ti = 0; ti < cfg.threads; ti++)
+        th.emplace_back([&, ti]() {
+          bsum[ti] = 0;
+          bcnt[ti] = 0;
+          int b;
+          while ((b = next_b.fetch_add(1)) < nb) {
+            long wi = w0 + b;
+            long off = start + wi * step_;
+            if (off + T + 1 > N)
+              continue;
+            int from = (stride < T && wi > 0) ? T - stride : 0;
+            // scoring happens inside the forward pass (per-position nll),
+            // strictly before this window's gradients update the model
+            ws[ti].run_window(&data[off], true);
+            for (int t = from; t < T; t++) {
+              bsum[ti] += ws[ti].nll[t];
+              bcnt[ti]++;
+            }
+          }
+        });
+      for (auto &t : th)
+        t.join();
+      for (int ti = 0; ti < cfg.threads; ti++) {
+        total += bsum[ti];
+        cnt += bcnt[ti];
+      }
+      tstep++;
+      float bc1 = 1 - powf(0.9f, (float)tstep);
+      float bc2 = 1 - powf(0.99f, (float)tstep);
+      long chunk = (model.NP + cfg.threads - 1) / cfg.threads;
+      vector<thread> ut;
+      for (int ci = 0; ci < cfg.threads; ci++)
+        ut.emplace_back([&, ci]() {
+          long lo = ci * chunk, hi = min<long>(model.NP, lo + chunk);
+          for (long i = lo; i < hi; i++) {
+            float g = 0;
+            for (int ti = 0; ti < cfg.threads; ti++) {
+              g += ws[ti].Glocal[i];
+              ws[ti].Glocal[i] = 0.0f;
+            }
+            g /= nb;
+            dm[i] = 0.9f * dm[i] + 0.1f * g;
+            dvv[i] = 0.99f * dvv[i] + 0.01f * g * g;
+            model.P[i] -=
+                cfg.dyneval * (dm[i] / bc1) / (sqrtf(dvv[i] / bc2) + 1e-8f);
+          }
+        });
+      for (auto &t : ut)
+        t.join();
+    }
+    model.P = P0;
+    return total / max(1L, cnt) / LN2;
+  };
+
   // final full evaluation
   if (cfg.nofinal)
     return 0;
-  double val_bpc = eval_range(val_start, val_n, cfg.evalstride);
-  double test_bpc = eval_range(test_start, test_n, cfg.evalstride);
-  cout << "RESULT params=" << model.NP << " val_bpc=" << setprecision(5)
-       << val_bpc << " test_bpc=" << test_bpc << endl;
+  if (!cfg.dynvalonly) {
+    double val_bpc = eval_range(val_start, val_n, cfg.evalstride);
+    double test_bpc = eval_range(test_start, test_n, cfg.evalstride);
+    cout << "RESULT params=" << model.NP << " val_bpc=" << setprecision(5)
+         << val_bpc << " test_bpc=" << test_bpc << endl;
+  }
+  if (cfg.dyneval > 0) {
+    double dv_ = dyn_eval_range(val_start, val_n);
+    double dt_ = cfg.dynvalonly ? 0.0 : dyn_eval_range(test_start, test_n);
+    cout << "DYNRESULT dyneval_lr=" << cfg.dyneval
+         << " dynbatch=" << cfg.dynbatch << " stride="
+         << (cfg.evalstride > 0 ? cfg.evalstride : cfg.block)
+         << " val_bpc=" << setprecision(5) << dv_;
+    if (!cfg.dynvalonly)
+      cout << " test_bpc=" << dt_;
+    cout << endl;
+  }
 
   if (!cfg.save.empty()) {
     ofstream sf(cfg.save, ios::binary);

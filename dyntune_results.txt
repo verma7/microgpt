@@ -1,0 +1,6 @@
+DYNRESULT dyneval_lr=5e-05 val_bpc=1.195 test_bpc=1.1731
+RESULT params=17824512 val_bpc=1.2053 test_bpc=1.1882
+DYNRESULT dyneval_lr=0.00015 val_bpc=1.2075 test_bpc=1.185
+RESULT params=17824512 val_bpc=1.2053 test_bpc=1.1882
+DYNRESULT dyneval_lr=0.0004 val_bpc=1.2519 test_bpc=1.2304
+RESULT params=17824512 val_bpc=1.2053 test_bpc=1.1882

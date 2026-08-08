@@ -37,6 +37,10 @@ c++ -O3 -std=c++17 microgpt_v5.cc -o microgpt_v5
 ./microgpt_v5 --embd 32 --hidden 128 --steps 32000 --batch 8 --gains --finalnorm < names.txt
 ```
 
+**Current record: 1.12 val / 1.09 test bpc** — a 24-hour scaling ladder
+(Muon optimizer, 17.8M params, 1024 context, dynamic evaluation) documented
+in [LADDER.md](LADDER.md).
+
 ## enwik8 (Hutter Prize)
 
 [microgpt_v6.cc](microgpt_v6.cc) scales the engine to a real benchmark:

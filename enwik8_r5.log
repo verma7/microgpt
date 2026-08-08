@@ -1,0 +1,25 @@
+config: layers=10 embd=384 heads=12 hidden=1024 block=1024 mlp=swiglu rope=1 tie=1 finalnorm=1 gains=1 residscale=1 dwconv=1 valres=0 attngate=0 qknorm=0 softmax1=1 muon=1 valemb=0 softcap=0 batch=16 threads=8 blas=1 steps=16000 lr=0.00015 seed=42 params=17824512 | data: train=90000000 val=5000000 test=5000000
+step 1000 | train bpc 1.235 | val bpc 1.371 | 9974 tok/s
+step 2000 | train bpc 1.283 | val bpc 1.362 | 9596 tok/s
+step 3000 | train bpc 1.276 | val bpc 1.354 | 9620 tok/s
+step 4000 | train bpc 1.264 | val bpc 1.344 | 9675 tok/s
+step 5000 | train bpc 1.256 | val bpc 1.335 | 9658 tok/s
+step 6000 | train bpc 1.242 | val bpc 1.323 | 9720 tok/s
+step 7000 | train bpc 1.232 | val bpc 1.314 | 9723 tok/s
+step 8000 | train bpc 1.213 | val bpc 1.306 | 9690 tok/s
+step 9000 | train bpc 1.198 | val bpc 1.287 | 9717 tok/s
+step 10000 | train bpc 1.18 | val bpc 1.272 | 9705 tok/s
+step 11000 | train bpc 1.159 | val bpc 1.261 | 9761 tok/s
+step 12000 | train bpc 1.142 | val bpc 1.245 | 9897 tok/s
+step 13000 | train bpc 1.125 | val bpc 1.236 | 10055 tok/s
+step 14000 | train bpc 1.101 | val bpc 1.226 | 10191 tok/s
+step 15000 | train bpc 1.091 | val bpc 1.222 | 10331 tok/s
+step 16000 | train bpc 1.08 | val bpc 1.217 | 10482 tok/s
+RESULT params=17824512 val_bpc=1.1347 test_bpc=1.1139
+saved enwik8_r5.bin
+--- sample (primed with 64 bytes of val) ---
+hey are sterar goods and make up a different and traditional area of human [[copper]], and use the rather much flexibility of the scale in the [[lagoon]] of the [[Canadian National Park]] as an actual land system.
+
+In the U.S., a large portion of the country, Canada has local [[Protected area|protected]] areas with a total of 1.4 travel ranges, setting up a range of 28% on [[Construction Ranges Centre|ranges]]. A single satellite annually crosses the [[Caribbean Sea]].
+
+''See also: [[List of Canadian copper
